@@ -1,0 +1,37 @@
+# 放在 OpnForm 官方儲存庫根目錄（與 docker-compose.yml 同層）。
+# 官方 docker-setup.sh 會自動套用這個檔案。
+name: opnform_test
+
+services:
+  # 只綁本機，用 ssh -L 轉出來看；不佔用主機的 80 埠
+  ingress:
+    ports: !override
+      - "127.0.0.1:18090:80"
+
+  api:
+    environment:
+      WEBHOOKS_ALLOW_PRIVATE_URLS: "true"   # 允許 Webhook 指向容器內網位址
+    volumes:
+      - ./certs/ca-bundle.crt:/etc/ssl/certs/ca-certificates.crt:ro
+
+  # Webhook 由佇列 worker 發出，所以 worker 也要信任測試憑證
+  api-worker:
+    environment:
+      WEBHOOKS_ALLOW_PRIVATE_URLS: "true"
+    volumes:
+      - ./certs/ca-bundle.crt:/etc/ssl/certs/ca-certificates.crt:ro
+
+  # 模擬「申請中心」接收端（HTTPS）
+  receiver:
+    image: node:22-alpine
+    working_dir: /app
+    command: ["node", "server.mjs"]
+    environment:
+      WEBHOOK_SECRET: ${WEBHOOK_SECRET:?請先 export WEBHOOK_SECRET（至少 12 字元）}
+      PORT: "4443"
+    volumes:
+      - ./receiver/server.mjs:/app/server.mjs:ro
+      - ./certs/server.crt:/app/server.crt:ro
+      - ./certs/server.key:/app/server.key:ro
+    ports:
+      - "127.0.0.1:14443:4443"
