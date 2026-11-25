@@ -1,6 +1,6 @@
 # 分階段上線計畫（草案）
 
-取代原規劃文件中以 SharePoint 為前提的「P1／P2／P3」排程。決策背景見 `/home/user/docs/adr/`，資料與規則見 `data-model.md`、`notifications.md`、`people-directory.md`。
+取代原規劃文件中以 SharePoint 為前提的「P1／P2／P3」排程。決策背景見 [adr/](adr/)，資料與規則見 [data-model.md](data-model.md)、[notifications.md](notifications.md)、[people-directory.md](people-directory.md)。
 
 ## 順序原則
 先讓全員有每天打開的理由並建好登入與後端（階段 1），申請中心接在後面（階段 2）。一人加 AI 開發，一次只推進一條主線。

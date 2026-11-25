@@ -1,6 +1,6 @@
 # 申請中心通知與催簽規則（草案）
 
-詞彙見 `/home/user/CONTEXT.md`，進度與流轉見 `/home/user/docs/data-model.md`。
+詞彙見 [CONTEXT.md](../CONTEXT.md)，進度與流轉見 [data-model.md](data-model.md)。
 
 ## 1. 管道
 
