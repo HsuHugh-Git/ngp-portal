@@ -27,10 +27,13 @@
 原型環境的網路政策只允許 git 代理，Composer 無法取得 GitHub 套件壓縮檔，PHP 套件裝不完。**在你自己的電腦或內部伺服器上用 Docker 跑才是實測的路。**
 
 ## 實測步驟（在有 Docker 的機器）
+
+完整、可直接照做的版本見 [opnform-test/README.md](opnform-test/README.md)，以下為摘要。
+
 1. 取得 OpnForm：`git clone https://github.com/OpnForm/OpnForm`，依其 `docker-compose.yml` 與 `api/.env.docker`、`client/.env.docker` 啟動。
 2. 建立表單「資訊需求申請單」：一個文字欄位「需求說明」，一個**隱藏欄位**名稱 `applicant_token`。
-3. 在表單整合新增 Webhook：網址指向接收端（`node receiver.mjs`，需讓 OpnForm 容器連得到；OpnForm 要求公開網址，內網位址可能被其驗證規則擋下，這是要確認的一點），設定 secret，與接收端的 `WEBHOOK_SECRET` 相同。
-4. 用接收端 `/token` 取得代碼，開啟 `表單網址?applicant_token=<代碼>`，填寫送出。
+3. 在表單整合新增 Webhook：網址指向接收端（須為 HTTPS，內網位址需開啟 `WEBHOOKS_ALLOW_PRIVATE_URLS`，見下方「Webhook 網址限制」），設定 secret，與接收端的 `WEBHOOK_SECRET` 相同。
+4. 用接收端 `/token` 取得代碼，開啟 `表單網址?<隱藏欄位的欄位 ID>=<代碼>`，填寫送出。**預填用的是欄位 ID，不是欄位名稱**（依 `client/lib/forms/composables/useFormInitialization.js`）。
 5. 檢查 `/tmp/receiver.log`：簽章是否通過、`applicant_token` 是否出現在 payload、`submission_id` 是否存在。
 6. 重複送出、關閉接收端再送出，觀察 OpnForm 是否重試。
 
